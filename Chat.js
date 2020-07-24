@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { useQuery, useMutation, useSubscription } from "react-apollo-hooks";
@@ -34,18 +34,35 @@ const NEW_MESSAGE = gql`
 const Chat = () => {
   const [message, setMessage] = useState("");
   const toId = "ckcym4okauwnq099955fb3iwz";
-  const rommId = "ckcyp5q30f1wg0975jltods7m";
+  const roomId = "ckcyp5q30f1wg0975jltods7m";
+  const { data } = useSubscription(NEW_MESSAGE, {
+    variables: {
+      roomId: roomId
+    }
+  });
+  const handleNewMessage = () => {
+    if (data !== undefined) {
+      const { newMessage } = data;
+      setMessages(previous => [...previous, newMessage]);
+    }
+  };
+  useEffect(
+    () => {
+      handleNewMessage();
+    },
+    [data]
+  );
   const [sendMessageMutation] = useMutation(SEND_MESSAGE, {
     variables: {
       toId: toId,
       message: message,
-      roomId: rommId
+      roomId: roomId
     },
     refetchQueries: () => [{ query: GET_MESSAGES }]
   });
   const { data: { messages: oldMessages }, error } = useQuery(GET_MESSAGES, {
     variables: {
-      roomId: rommId
+      roomId: roomId
     },
     suspend: true
   });
