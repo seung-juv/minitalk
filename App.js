@@ -8,6 +8,7 @@ import Chat from "./Chat";
 export default function App() {
   const [notificationStatus, setStatus] = useState(false);
   const ask = async () => {
+    // why status undetermined?????????????????????
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
     console.log(status);
   };
