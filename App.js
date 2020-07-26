@@ -4,13 +4,14 @@ import * as Permissions from "expo-permissions";
 import { Notifications } from "expo";
 import client from "./apollo";
 import Chat from "./Chat";
+import { Alert } from "react-native";
 
 export default function App() {
   const [notificationStatus, setStatus] = useState(false);
   const ask = async () => {
-    // why status undetermined?????????????????????
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    console.log(status);
+    setStatus(status);
+    let token = await Notifications.getExpoPushTokenAsync();
   };
   useEffect(() => {
     ask();
